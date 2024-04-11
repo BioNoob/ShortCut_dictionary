@@ -1,0 +1,201 @@
+﻿<Window x:Class="ShortCut_dictionary.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShortCut_dictionary"
+        xmlns:local_model="clr-namespace:ShortCut_dictionary.Models"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" Loaded="Window_Loaded"
+        mc:Ignorable="d" GotFocus="Window_GotFocus"
+        Title="MainWindow" Name="Window" MinHeight="150" MinWidth="320"
+        WindowStyle="None" WindowState="Normal" ResizeMode="CanResize"
+        AllowsTransparency="True"  Background="Transparent"
+        Height="{Binding Sets.WindowSise.X, Mode=TwoWay}" Width="{Binding Sets.WindowSise.Y, Mode=TwoWay}"
+        Top="{Binding Sets.WindowLastPos.Y, Mode=TwoWay}" Left="{Binding Sets.WindowLastPos.X, Mode=TwoWay}">
+    <Window.DataContext>
+        <local_model:MainModel/>
+    </Window.DataContext>
+    <Window.InputBindings>
+        <KeyBinding 
+            Key="Esc"
+            Command="{Binding RejSearchCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+        <KeyBinding
+            Key="N"
+            Modifiers="Ctrl"
+            Command="{Binding AddNewRecordCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+    </Window.InputBindings>
+    <WindowChrome.WindowChrome>
+        <WindowChrome 
+        CaptionHeight="0"
+        ResizeBorderThickness="10" />
+    </WindowChrome.WindowChrome>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding CloseWindowCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}" x:Key="ImgButton" BasedOn="{StaticResource DefaultStyle}">
+            <Setter Property="Background" Value="#FF3F3F3F" />
+            <Setter Property="BorderBrush" Value="#FF3F3F3F" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="1"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#50FFFFFF"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="Background" Value="#50FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+
+        </Style>
+        <Style TargetType="{x:Type MenuItem}">
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <Grid Name="Root" Height="Auto" >
+                            <ContentPresenter Name="HeaderHost" Margin="5,2,5,2" ContentSource="Header" RecognizesAccessKey="True" HorizontalAlignment="Left" VerticalAlignment="Center"
+                      TextOptions.TextRenderingMode="ClearType" TextBlock.FontSize="12" TextBlock.Foreground="{TemplateBinding Foreground}" TextOptions.TextFormattingMode="Display">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#505050"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#808080"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="#808080"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type ContextMenu}">
+            <Setter Property="Background" Value="#FF3F3F3F"/>
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Opacity" Value="0.9"/>
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Grid.IsSharedSizeScope" Value="true" />
+            <Setter Property="HasDropShadow" Value="True" />
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContextMenu}">
+                        <Grid Background="Transparent">
+                            <Border Background="#FF3F3F3F" BorderThickness="1" BorderBrush="Black" CornerRadius="5">
+                                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Margin="2"/>
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="3" ShadowDepth="3" Color="Black" Opacity="0.5"/>
+                                </Border.Effect>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Border CornerRadius="2" BorderBrush="#FF3F3F3F" Background="#FF3F3F3F" BorderThickness="0" Padding="0" SnapsToDevicePixels="True">
+        <Grid  Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Label Content="Search" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Text="{Binding Search_text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="Srch_txb"
+                     HorizontalContentAlignment="Left" VerticalContentAlignment="Center" KeyboardNavigation.TabIndex="0"/>
+            <Button Margin="5,0,0,0" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" Command="{Binding CloseWindowCommand}" KeyboardNavigation.TabIndex="2">
+                <Image Source="Resources/закрыть.png"/>
+                <Button.Style>
+                    <Style BasedOn="{StaticResource ImgButton}" TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#7FA50000"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter Property="Background" Value="#A50000"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="#7FA50000"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Label Content="Result" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,5,0,0"/>
+            <ListView Margin="10,5,0,0" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding FilteredListOfDict}" SelectionMode="Single" AlternationCount="2" KeyboardNavigation.TabNavigation="None"
+                          x:Name="SearchResult" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyboardNavigation.IsTabStop="False">
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:DictClass}">
+                        <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick" Tag="{Binding }">
+                            <Grid VerticalAlignment="Stretch" Margin="0" ClipToBounds="True">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Short}" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" KeyboardNavigation.IsTabStop="False"/>
+                                <TextBlock Margin="5,0,0,0" Text="{Binding Full}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="1" 
+                                              TextWrapping="WrapWithOverflow" KeyboardNavigation.IsTabStop="False"/>
+                            </Grid>
+                            <ContentControl.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Edit" Command="{Binding Path=DataContext.EditRecCommand, Source={x:Reference Name=Window}}" CommandParameter="{Binding }"/>
+                                    <MenuItem Header="Remove" Command="{Binding Path=DataContext.DelRecCommand, Source={x:Reference Name=Window}}" CommandParameter="{Binding }"/>
+                                </ContextMenu>
+                            </ContentControl.ContextMenu>
+                        </ContentControl>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Style.Triggers>
+                            <Trigger Property="ItemsControl.AlternationIndex"  Value="0">
+                                <Setter Property="Background" Value="LightGray" />
+                            </Trigger>
+                            <Trigger Property="ItemsControl.AlternationIndex"  Value="1">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+            <Label Content="For copy ROW use double click!" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="0" FontSize="10" Foreground="LightGray"/>
+            <Button Margin="0,5,0,0" Grid.Row="1" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding AddNewRecordCommand}" Style="{StaticResource ImgButton}"
+                    KeyboardNavigation.TabIndex="1">
+                <Image Source="Resources/добавить.png"/>
+            </Button>
+        </Grid>
+
+    </Border>
+</Window>
