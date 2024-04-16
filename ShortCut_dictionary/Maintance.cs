@@ -11,11 +11,36 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 
 namespace ShortCut_dictionary
 {
+    public class CommandHandler : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+        private readonly Action<object> _execute;
+        private readonly Predicate<object> _canExecute;
+
+        public CommandHandler(Action<object> execute, Predicate<object> canExecute)
+        {
+            _execute = execute;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object parameter)
+        {
+            if (_canExecute == null)
+                return true;
+            return _canExecute(parameter);
+        }
+
+        public void Execute(object parameter)
+        {
+            _execute?.Invoke(parameter);
+        }
+    }
     public interface ICloseableResult
     {
         void Close(bool state, object result);
@@ -46,46 +71,47 @@ namespace ShortCut_dictionary
             return true;
         }
     }
-    public class CustomPoint : Proper
+    public static class Settings
     {
-        public CustomPoint(int x, int y) { X = x; Y = y; }
-        public CustomPoint() { X = 0; Y = 0; }
-        private int x;
-        private int y;
-        public int X { get => x; set => SetProperty(ref x, value); }
-        public int Y { get => y; set => SetProperty(ref y, value); }
-    }
-    public class Settings : Proper
-    {
-        bool _chk_bx_case;
-        private CustomPoint windowSize;
-        private CustomPoint windowLastPos;
-        private string _filepath = Directory.GetCurrentDirectory() + "\\dictionary.json";
-        public string FilePath { get => _filepath; set => SetProperty(ref _filepath, value); }
-        public CustomPoint WindowSise { get => windowSize; set => SetProperty(ref windowSize, value); }
-        public CustomPoint WindowLastPos { get => windowLastPos; set => SetProperty(ref windowLastPos, value); }
-        public bool ChkBxCase { get => _chk_bx_case; set => SetProperty(ref _chk_bx_case, value); }
+        private static bool _chk_bx_case;
+        private static bool _chk_bx_first_case;
+        private static int windowSize_y;
+        private static int windowLastPos_y;
+        private static int windowSize_x;
+        private static int windowLastPos_x;
+        private static string _filepath = Directory.GetCurrentDirectory() + "\\dictionary.json";
+        public static string FilePath { get => _filepath; set { _filepath = value; SetProperty("FilePath"); } }
+        public static int WindowSise_x { get => windowSize_x; set { windowSize_x = value; SetProperty("WindowSise_x"); } }
+        public static int WindowLastPos_x { get => windowLastPos_x; set { windowLastPos_x = value; SetProperty("WindowLastPos_x"); } }
+        public static int WindowSise_y { get => windowSize_y; set { windowSize_y = value; SetProperty("WindowSise_y"); } }
+        public static int WindowLastPos_y { get => windowLastPos_y; set { windowLastPos_y = value; SetProperty("WindowLastPos_y"); } }
+        public static bool ChkBxCase { get => _chk_bx_case; set { _chk_bx_case = value; SetProperty("ChkBxCase"); } }
+        public static bool ChkBxFirstCase { get => _chk_bx_first_case; set { _chk_bx_first_case = value; SetProperty("ChkBxFirstCase"); } }
 
-        public Settings()
+        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
+        public static void SetProperty([CallerMemberName] string propertyName = null)
         {
-            WindowSise = new CustomPoint();
-            WindowLastPos = new CustomPoint();
+            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
         }
-        public void SaveSettings()
+        public static void SaveSettings()
         {
-            Properties.Settings.Default.LastPos = new Point(WindowLastPos.X, WindowLastPos.Y);
-            Properties.Settings.Default.LastSize = new Size(WindowSise.X, WindowSise.Y);
+            Properties.Settings.Default.LastPos = new Point(WindowLastPos_x, WindowLastPos_y);
+            Properties.Settings.Default.LastSize = new Size(WindowSise_x, WindowSise_y);
             Properties.Settings.Default.NewRec_upper = ChkBxCase;
+            Properties.Settings.Default.NewRec_upper_first = ChkBxFirstCase;
             Properties.Settings.Default.Save();
         }
-        public void LoadSettings()
+        public static void LoadSettings()
         {
-            WindowSise = new CustomPoint() { X = Properties.Settings.Default.LastSize.Width, Y = Properties.Settings.Default.LastSize.Height };
-            WindowLastPos = new CustomPoint() { X = Properties.Settings.Default.LastPos.X, Y = Properties.Settings.Default.LastPos.Y };
+            WindowSise_x = Properties.Settings.Default.LastSize.Width;
+            WindowSise_y = Properties.Settings.Default.LastSize.Height;
+            WindowLastPos_x = Properties.Settings.Default.LastPos.X;
+            WindowLastPos_y = Properties.Settings.Default.LastPos.Y;
             ChkBxCase = Properties.Settings.Default.NewRec_upper;
+            ChkBxFirstCase = Properties.Settings.Default.NewRec_upper_first;
         }
 
-        public WpfObservableRangeCollection<DictClass> LoadJson()
+        public static WpfObservableRangeCollection<DictClass> LoadJson()
         {
 
             if (!File.Exists(FilePath))
@@ -93,21 +119,9 @@ namespace ShortCut_dictionary
                 File.Create(FilePath).Close();
             }
             return JsonConvert.DeserializeObject<WpfObservableRangeCollection<DictClass>>(File.ReadAllText(FilePath));
-            //return z;
-
-            //return new WpfObservableRangeCollection<DictClass>();
-            //StreamReader rd = new StreamReader(FilePath);
-            //try
-            //{
-            //    return new WpfObservableRangeCollection<DictClass>(JsonConvert.DeserializeObject<WpfObservableRangeCollection<DictClass>>(rd.ReadLine()));
-            //}
-            //catch (Exception)
-            //{
-            //    throw;
-            //}
         }
 
-        public bool SaveJsone(WpfObservableRangeCollection<DictClass> coll)
+        public static bool SaveJsone(WpfObservableRangeCollection<DictClass> coll)
         {
             try
             {

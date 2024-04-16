@@ -59,6 +59,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Button Margin="5,0,0,0" Grid.Column="2" ClipToBounds="True"  HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding RejectCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                     KeyboardNavigation.TabIndex="3">
@@ -119,10 +120,10 @@
                 <TextBox.Style>
                     <Style TargetType="{x:Type TextBox}">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ChkBxCase}" Value="true">
+                            <DataTrigger Binding="{Binding Path=(local:Settings.ChkBxCase), Mode=TwoWay}" Value="true">
                                 <Setter Property="CharacterCasing" Value="Upper"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding ChkBxCase}" Value="false">
+                            <DataTrigger Binding="{Binding Path=(local:Settings.ChkBxFirstCase), Mode=TwoWay}" Value="false">
                                 <Setter Property="CharacterCasing" Value="Normal"/>
                             </DataTrigger>
                         </Style.Triggers>
@@ -130,7 +131,13 @@
                 </TextBox.Style>
             </TextBox>
             <CheckBox Grid.Row="1" Grid.Column="1" Margin="5,2,0,5" VerticalAlignment="Center" HorizontalAlignment="Left" Content=" Use UPPER case" Padding="0" Foreground="LightGray"
-                      IsChecked="{Binding ChkBxCase}" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False">
+                      IsChecked="{Binding Path=(local:Settings.ChkBxCase), Mode=TwoWay}" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False">
+                <CheckBox.LayoutTransform>
+                    <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <CheckBox Grid.Row="3" Grid.Column="1" Margin="5,2,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Content=" Use first letter is UPPER case" Padding="0" Foreground="LightGray"
+                      IsChecked="{Binding Path=(local:Settings.ChkBxFirstCase), Mode=TwoWay}" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False">
                 <CheckBox.LayoutTransform>
                     <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
                 </CheckBox.LayoutTransform>

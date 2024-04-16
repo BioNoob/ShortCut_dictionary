@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,8 +8,6 @@ namespace ShortCut_dictionary.Models
 {
     public class NewRecordModel : Proper
     {
-        bool _chk_bx_case;
-        public bool ChkBxCase { get => _chk_bx_case; set => SetProperty(ref _chk_bx_case, value); }
         DictClass _DictRec;
         public DictClass DictRec { get => _DictRec; set => SetProperty(ref _DictRec, value); }
         public NewRecordModel()

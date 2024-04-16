@@ -58,5 +58,17 @@ namespace ShortCut_dictionary.Properties {
                 this["NewRec_upper"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NewRec_upper_first {
+            get {
+                return ((bool)(this["NewRec_upper_first"]));
+            }
+            set {
+                this["NewRec_upper_first"] = value;
+            }
+        }
     }
 }

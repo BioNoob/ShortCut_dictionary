@@ -10,8 +10,8 @@
         Title="MainWindow" Name="Window" MinHeight="150" MinWidth="320"
         WindowStyle="None" WindowState="Normal" ResizeMode="CanResize"
         AllowsTransparency="True"  Background="Transparent"
-        Height="{Binding Sets.WindowSise.X, Mode=TwoWay}" Width="{Binding Sets.WindowSise.Y, Mode=TwoWay}"
-        Top="{Binding Sets.WindowLastPos.Y, Mode=TwoWay}" Left="{Binding Sets.WindowLastPos.X, Mode=TwoWay}">
+        Height="{Binding Path=(local:Settings.WindowSise_y), Mode=TwoWay}" Width="{Binding Path=(local:Settings.WindowSise_x), Mode=TwoWay}"
+        Top="{Binding Path=(local:Settings.WindowLastPos_y), Mode=TwoWay}" Left="{Binding Path=(local:Settings.WindowLastPos_x), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
     <Window.DataContext>
         <local_model:MainModel/>
     </Window.DataContext>
@@ -23,6 +23,10 @@
             Key="N"
             Modifiers="Ctrl"
             Command="{Binding AddNewRecordCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+        <KeyBinding
+            Key="S"
+            Modifiers="Ctrl"
+            Command="{Binding SaveJsnCmd}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
     </Window.InputBindings>
     <WindowChrome.WindowChrome>
         <WindowChrome 
@@ -194,6 +198,16 @@
             <Button Margin="0,5,0,0" Grid.Row="1" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding AddNewRecordCommand}" Style="{StaticResource ImgButton}"
                     KeyboardNavigation.TabIndex="1">
                 <Image Source="Resources/добавить.png"/>
+                <Button.ToolTip>
+                    <ToolTip Content="Add new record"/>
+                </Button.ToolTip>
+            </Button>
+            <Button Margin="0,0,0,0" Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding SaveJsnCmd}" Style="{StaticResource ImgButton}"
+                    KeyboardNavigation.TabIndex="2">
+                <Button.ToolTip>
+                    <ToolTip Content="Save data"/>
+                </Button.ToolTip>
+                <Image Source="Resources/save.png"/>
             </Button>
         </Grid>
 

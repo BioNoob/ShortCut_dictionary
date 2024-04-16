@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace ShortCut_dictionary
 {
@@ -16,8 +17,8 @@ namespace ShortCut_dictionary
 
         public void Close(bool state, object result)
         {
-            DialogResult = state;
             Result = result;
+            DialogResult = state;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
