@@ -80,13 +80,13 @@ namespace ShortCut_dictionary
         private static int windowSize_x;
         private static int windowLastPos_x;
         private static string _filepath = Directory.GetCurrentDirectory() + "\\dictionary.json";
-        public static string FilePath { get => _filepath; set { _filepath = value; SetProperty("FilePath"); } }
-        public static int WindowSise_x { get => windowSize_x; set { windowSize_x = value; SetProperty("WindowSise_x"); } }
-        public static int WindowLastPos_x { get => windowLastPos_x; set { windowLastPos_x = value; SetProperty("WindowLastPos_x"); } }
-        public static int WindowSise_y { get => windowSize_y; set { windowSize_y = value; SetProperty("WindowSise_y"); } }
-        public static int WindowLastPos_y { get => windowLastPos_y; set { windowLastPos_y = value; SetProperty("WindowLastPos_y"); } }
-        public static bool ChkBxCase { get => _chk_bx_case; set { _chk_bx_case = value; SetProperty("ChkBxCase"); } }
-        public static bool ChkBxFirstCase { get => _chk_bx_first_case; set { _chk_bx_first_case = value; SetProperty("ChkBxFirstCase"); } }
+        public static string FilePath { get => _filepath; set { if (_filepath != value) { _filepath = value; SetProperty("FilePath"); } } }
+        public static int WindowSise_x { get => windowSize_x; set { if (windowSize_x != value) { windowSize_x = value; SetProperty("WindowSise_x"); } } }
+        public static int WindowLastPos_x { get => windowLastPos_x; set { if (windowLastPos_x != value) { windowLastPos_x = value; SetProperty("WindowLastPos_x"); } } }
+        public static int WindowSise_y { get => windowSize_y; set { if (windowSize_y != value) { windowSize_y = value; SetProperty("WindowSise_y"); } } }
+        public static int WindowLastPos_y { get => windowLastPos_y; set { if (windowLastPos_y != value) { windowLastPos_y = value; SetProperty("WindowLastPos_y"); } } }
+        public static bool ChkBxCase { get => _chk_bx_case; set { if (_chk_bx_case != value) { _chk_bx_case = value; SetProperty("ChkBxCase"); } } }
+        public static bool ChkBxFirstCase { get => _chk_bx_first_case; set { if (_chk_bx_first_case != value) { _chk_bx_first_case = value; SetProperty("ChkBxFirstCase"); } } }
 
         public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
         public static void SetProperty([CallerMemberName] string propertyName = null)

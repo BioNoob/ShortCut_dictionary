@@ -67,6 +67,10 @@
             </Style.Triggers>
 
         </Style>
+        <Style TargetType="{x:Type ToolTip}">
+            <Setter Property="FontFamily" Value="Jura"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
         <Style TargetType="{x:Type MenuItem}">
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="Template">
@@ -202,12 +206,38 @@
                     <ToolTip Content="Add new record"/>
                 </Button.ToolTip>
             </Button>
-            <Button Margin="0,0,0,0" Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding SaveJsnCmd}" Style="{StaticResource ImgButton}"
+            <Button Margin="5,0,0,0" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding ImportCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                    KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False" Style="{StaticResource ImgButton}">
+                <Image Source="Resources/импортировать.png"/>
+                <Button.ToolTip>
+                    <ToolTip Content="Import CSV"/>
+                </Button.ToolTip>
+            </Button>
+            <Button Margin="0,0,0,0" Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding SaveJsnCmd}"
                     KeyboardNavigation.TabIndex="2">
                 <Button.ToolTip>
                     <ToolTip Content="Save data"/>
                 </Button.ToolTip>
                 <Image Source="Resources/save.png"/>
+                <Button.Style>
+                    <Style BasedOn="{StaticResource ImgButton}" TargetType="{x:Type Button}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSaved}" Value="true">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation To="LimeGreen" AutoReverse="True"
+                                    Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" 
+                                    FillBehavior="Stop" 
+                                    Duration="0:0:0.5"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+
+                </Button.Style>
             </Button>
         </Grid>
 

@@ -80,7 +80,7 @@
                 </Button.Style>
                 <Image Source="Resources/закрыть.png"/>
             </Button>
-            <Button Margin="5,0,0,0" Grid.Row="2" Grid.Column="2" ClipToBounds="True" HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding ApproveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+            <Button Margin="5,0,0,0" Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" ClipToBounds="True" HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding ApproveCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
                     IsEnabled="{Binding DictRec.IsValid, UpdateSourceTrigger=PropertyChanged}" KeyboardNavigation.TabIndex="2">
                 <Button.Style>
                     <Style BasedOn="{StaticResource ImgButton}" TargetType="{x:Type Button}">
@@ -102,47 +102,37 @@
                 </Button.Style>
                 <Image Source="Resources/принять.png"/>
             </Button>
-            <Button Margin="5,0,0,0" Grid.Row="2" Grid.Column="2" ClipToBounds="True" HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding ImportCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
-                    KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False">
-                <Button.Style>
-                    <Style BasedOn="{StaticResource ImgButton}" TargetType="{x:Type Button}">
-
-                    </Style>
-                </Button.Style>
-                <Image Source="Resources/импортировать.png"/>
-                <Button.ToolTip>
-                    <TextBlock Text="CSV delimeter ';'"/>
-                </Button.ToolTip>
-            </Button>
             <Label Content="Short" Grid.Row="0" Grid.Column="0"  Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             <TextBox Grid.Row="0" Grid.Column="1" Margin="5,0,0,0" Text="{Binding DictRec.Short, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="Short_txb"
-                     HorizontalContentAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Height="25" KeyboardNavigation.TabIndex="0">
-                <TextBox.Style>
-                    <Style TargetType="{x:Type TextBox}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=(local:Settings.ChkBxCase), Mode=TwoWay}" Value="true">
-                                <Setter Property="CharacterCasing" Value="Upper"/>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=(local:Settings.ChkBxFirstCase), Mode=TwoWay}" Value="false">
-                                <Setter Property="CharacterCasing" Value="Normal"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBox.Style>
-            </TextBox>
+                     HorizontalContentAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Height="25" KeyboardNavigation.TabIndex="0"/>
             <CheckBox Grid.Row="1" Grid.Column="1" Margin="5,2,0,5" VerticalAlignment="Center" HorizontalAlignment="Left" Content=" Use UPPER case" Padding="0" Foreground="LightGray"
-                      IsChecked="{Binding Path=(local:Settings.ChkBxCase), Mode=TwoWay}" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False">
+                      IsChecked="{Binding Path=(local:Settings.ChkBxCase), Mode=TwoWay}" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False" FontFamily="Jura">
                 <CheckBox.LayoutTransform>
                     <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
                 </CheckBox.LayoutTransform>
             </CheckBox>
             <CheckBox Grid.Row="3" Grid.Column="1" Margin="5,2,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Content=" Use first letter is UPPER case" Padding="0" Foreground="LightGray"
-                      IsChecked="{Binding Path=(local:Settings.ChkBxFirstCase), Mode=TwoWay}" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False">
+                      IsChecked="{Binding Path=(local:Settings.ChkBxFirstCase), Mode=TwoWay}" KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False" FontFamily="Jura">
                 <CheckBox.LayoutTransform>
                     <ScaleTransform ScaleX="0.8" ScaleY="0.8" />
                 </CheckBox.LayoutTransform>
             </CheckBox>
             <Label Content="Full" Grid.Row="2" Grid.Column="0" Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Image Width="18" Height="18" Grid.Row="2" Grid.Column="0" VerticalAlignment="Bottom" Margin="0">
+                <Image.Style>
+                    <Style TargetType="Image">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Is_rec_to_change}" Value="true">
+                                <Setter Property="Source" Value="Resources/r_checked.png"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Is_rec_to_change}" Value="false">
+                                <Setter Property="Source" Value="Resources/r_unchecked.png"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Image.Style>
+            </Image>
+            <Label Content="Changed" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="9" Padding="0"/>
             <TextBox Grid.Row="2" Grid.Column="1" Margin="5,0,0,0" Text="{Binding DictRec.Full, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                      HorizontalContentAlignment="Left" VerticalContentAlignment="Top" TextWrapping="Wrap" KeyboardNavigation.TabIndex="1"/>
         </Grid>

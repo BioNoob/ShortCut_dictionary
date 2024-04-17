@@ -21,6 +21,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\r_checked.png" />
+    <None Remove="Resources\r_unchecked.png" />
     <None Remove="Resources\save.png" />
     <None Remove="Resources\Untitled.ico" />
     <None Remove="Resources\добавить.png" />
@@ -35,6 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\r_checked.png" />
+    <Resource Include="Resources\r_unchecked.png" />
     <Resource Include="Resources\save.png" />
     <Resource Include="Resources\Untitled.ico" />
     <Resource Include="Resources\добавить.png" />

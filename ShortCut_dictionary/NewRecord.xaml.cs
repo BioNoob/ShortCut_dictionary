@@ -19,6 +19,10 @@ namespace ShortCut_dictionary
         {
             Result = result;
             DialogResult = state;
+            if(DataContext as IDisposable != null)
+            {
+                (DataContext as IDisposable).Dispose();
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
