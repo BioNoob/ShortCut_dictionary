@@ -73,6 +73,7 @@ namespace ShortCut_dictionary
     }
     public static class Settings
     {
+        public static Uri base_uri { get; set; }
         private static bool _chk_bx_case;
         private static bool _chk_bx_first_case;
         private static int windowSize_y;

@@ -38,7 +38,7 @@
             <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
         </i:EventTrigger>
         <i:EventTrigger EventName="Closing">
-            <i:InvokeCommandAction Command="{Binding CloseWindowCommand}"/>
+            <i:InvokeCommandAction Command="{Binding CloseWindowCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.Resources>
@@ -143,7 +143,7 @@
             <Label Content="Search" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <TextBox Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Text="{Binding Search_text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="Srch_txb"
                      HorizontalContentAlignment="Left" VerticalContentAlignment="Center" KeyboardNavigation.TabIndex="0"/>
-            <Button Margin="5,0,0,0" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" Command="{Binding CloseWindowCommand}" KeyboardNavigation.TabIndex="2">
+            <Button Margin="5,0,0,0" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" Command="{Binding CloseWindowCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" KeyboardNavigation.TabIndex="2">
                 <Image Source="Resources/закрыть.png"/>
                 <Button.Style>
                     <Style BasedOn="{StaticResource ImgButton}" TargetType="{x:Type Button}">

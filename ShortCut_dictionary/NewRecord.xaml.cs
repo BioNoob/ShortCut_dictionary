@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace ShortCut_dictionary
 {
@@ -32,6 +35,8 @@ namespace ShortCut_dictionary
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Short_txb.Focus();
+            //SpellCheck.CustomDictionaries
+            
         }
     }
 }

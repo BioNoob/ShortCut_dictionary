@@ -21,6 +21,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Rus.dic" />
+    <None Remove="Resources\Russian_b.dic" />
+    <None Remove="Resources\Russian_b.lex" />
+    <None Remove="Resources\Russian_s.lex" />
     <None Remove="Resources\r_checked.png" />
     <None Remove="Resources\r_unchecked.png" />
     <None Remove="Resources\save.png" />
@@ -37,6 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\Russian_b.dic" />
     <Resource Include="Resources\r_checked.png" />
     <Resource Include="Resources\r_unchecked.png" />
     <Resource Include="Resources\save.png" />

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShortCut_dictionary"
-        xmlns:local_model="clr-namespace:ShortCut_dictionary.Models"
+        xmlns:local_model="clr-namespace:ShortCut_dictionary.Models" xmlns:System="clr-namespace:System;assembly=System.Runtime"
         mc:Ignorable="d"  Closing="Window_Closing" WindowStyle="None" WindowState="Normal" ResizeMode="NoResize"
          AllowsTransparency="True"  Background="Transparent" Loaded="Window_Loaded"
         Title="NewRecord" Height="125" Width="250">
@@ -133,8 +133,9 @@
                 </Image.Style>
             </Image>
             <Label Content="Changed" Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="9" Padding="0"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Margin="5,0,0,0" Text="{Binding DictRec.Full, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                     HorizontalContentAlignment="Left" VerticalContentAlignment="Top" TextWrapping="Wrap" KeyboardNavigation.TabIndex="1"/>
+            <TextBox x:Name="full_txb" Grid.Row="2" Grid.Column="1" Margin="5,0,0,0" Text="{Binding DictRec.Full, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SpellCheck.IsEnabled="True"
+                     HorizontalContentAlignment="Left" VerticalContentAlignment="Top" TextWrapping="Wrap" KeyboardNavigation.TabIndex="1" Language="ru-RU">
+            </TextBox>
         </Grid>
     </Border>
 </Window>

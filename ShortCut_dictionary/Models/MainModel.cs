@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Controls;
 
 namespace ShortCut_dictionary.Models
 {
@@ -211,9 +212,10 @@ namespace ShortCut_dictionary.Models
             {
                 return _closewindow ??= new CommandHandler(obj =>
                 {
+                    var windowFacade = obj as ICloseableResult;
                     Settings.SaveSettings();
                     Settings.SaveJsone(ListOfDict);
-                    Environment.Exit(0);
+                    windowFacade?.Close(false, null);
                 },
                 (obj) => true
                 );
