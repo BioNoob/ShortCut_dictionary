@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Controls;
 
 namespace ShortCut_dictionary.Models
 {
@@ -46,18 +46,18 @@ namespace ShortCut_dictionary.Models
         {
             if (ListOfDict != null)
             {
-                WpfObservableRangeCollection<DictClass> res = new WpfObservableRangeCollection<DictClass>();
                 if (!string.IsNullOrEmpty(search_text) && search_text.Length > 1)
                 {
                     if (IsValidRegex(search_text))
                     {
                         var reg = new Regex(@$"{search_text}", RegexOptions.IgnoreCase);
                         FilteredListOfDict = new WpfObservableRangeCollection<DictClass>(ListOfDict.Where(t => reg.IsMatch(t.Full) |
-                        reg.IsMatch(t.Short)).ToList());
+                        reg.IsMatch(t.Short)).OrderBy(t=>t.Short));
                     }
                 }
                 else
-                    FilteredListOfDict = new WpfObservableRangeCollection<DictClass>(ListOfDict);
+                    FilteredListOfDict = new WpfObservableRangeCollection<DictClass>(ListOfDict.OrderBy(t => t.Short));
+
             }
         }
 
@@ -84,7 +84,10 @@ namespace ShortCut_dictionary.Models
                     "|CSV files (*.csv)|*.csv";
                     if (Ofd.ShowDialog() == true)
                     {
-                        var buf = File.ReadLines(Ofd.FileName).ToList();
+                        //Добавить форму импорта с выбором кодировки и разделителя.
+                        //Добавить копирование чере список выделенных с указанаием разделителя
+                        //Добавить удаление дубликатов (полных)
+                        var buf = File.ReadLines(Ofd.FileName, Encoding.GetEncoding(1251)).ToList();
                         List<DictClass> dc = new List<DictClass>();
                         buf.ForEach(t =>
                         {
@@ -106,9 +109,13 @@ namespace ShortCut_dictionary.Models
                                     }
                                 }
                             }
-                            dc.Add(new DictClass(k[0], k[1]));
+                            var a = new DictClass(k[0].Trim(), k[1].Trim());
+                            NewRecordModel.Check_settings(a);
+                            dc.Add(a);
                         });
                         ListOfDict.AddRange(dc);
+                        ListOfDict.OrderBy(t => t.Short);
+                        Search();
                     }
                     else
                         return;

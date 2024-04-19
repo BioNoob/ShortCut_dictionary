@@ -16,6 +16,8 @@ namespace ShortCut_dictionary
         {
             InitializeComponent();
             var a = BaseUriHelper.GetBaseUri(this).AbsoluteUri;
+            System.Text.Encoding.RegisterProvider(
+    System.Text.CodePagesEncodingProvider.Instance);
             a = a.Substring(0, a.LastIndexOf("/")) + "Resources/Russian_b.dic";
             Settings.base_uri = new Uri(a);
             IList dictionaries = SpellCheck.GetCustomDictionaries(Srch_txb);
@@ -36,7 +38,7 @@ namespace ShortCut_dictionary
 
         private void Window_GotFocus(object sender, RoutedEventArgs e)
         {
-            Srch_txb.Focus();
+            //Srch_txb.Focus();
         }
 
         public void Close(bool state, object result)

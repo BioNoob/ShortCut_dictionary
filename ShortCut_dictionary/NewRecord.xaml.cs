@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
 
 namespace ShortCut_dictionary
 {
@@ -22,7 +19,7 @@ namespace ShortCut_dictionary
         {
             Result = result;
             DialogResult = state;
-            if(DataContext as IDisposable != null)
+            if (DataContext as IDisposable != null)
             {
                 (DataContext as IDisposable).Dispose();
             }
@@ -36,7 +33,7 @@ namespace ShortCut_dictionary
         {
             Short_txb.Focus();
             //SpellCheck.CustomDictionaries
-            
+
         }
     }
 }

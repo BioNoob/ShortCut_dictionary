@@ -25,7 +25,7 @@ namespace ShortCut_dictionary.Models
         }
 
         public void SetData(DictClass dt) => DictRec = dt;
-        public DictClass GetData() => new DictClass(DictRec.Short,DictRec.Full);
+        public DictClass GetData() => new DictClass(DictRec.Short, DictRec.Full);
 
         public NewRecordModel()
         {
@@ -47,6 +47,10 @@ namespace ShortCut_dictionary.Models
             Check_settings();
         }
         private void Check_settings(string PropertyName = "")
+        {
+            Check_settings(DictRec, PropertyName);
+        }
+        public static void Check_settings(DictClass DictRec, string PropertyName = "")
         {
             if (PropertyName == "ChkBxCase" || PropertyName == "")
             {

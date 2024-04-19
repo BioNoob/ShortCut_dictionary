@@ -162,19 +162,21 @@
                 </Button.Style>
             </Button>
             <Label Content="Result" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,5,0,0"/>
-            <ListView Margin="10,5,0,0" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding FilteredListOfDict}" SelectionMode="Single" AlternationCount="2" KeyboardNavigation.TabNavigation="None"
-                          x:Name="SearchResult" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" KeyboardNavigation.IsTabStop="False">
+            <ListView Margin="10,5,0,0" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding FilteredListOfDict}" SelectionMode="Extended" AlternationCount="2" 
+                          x:Name="SearchResult" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                          IsTabStop="False" KeyboardNavigation.TabNavigation="None">
                 <ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:DictClass}">
-                        <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick" Tag="{Binding }">
+                        <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick" Tag="{Binding }" IsTabStop="False" KeyboardNavigation.TabNavigation="None">
                             <Grid VerticalAlignment="Stretch" Margin="0" ClipToBounds="True">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="0.2*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="{Binding Short}" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" KeyboardNavigation.IsTabStop="False"/>
+                                <TextBlock Text="{Binding Short}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="0" 
+                                           />
                                 <TextBlock Margin="5,0,0,0" Text="{Binding Full}" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="1" 
-                                              TextWrapping="WrapWithOverflow" KeyboardNavigation.IsTabStop="False"/>
+                                              TextWrapping="WrapWithOverflow"/>
                             </Grid>
                             <ContentControl.ContextMenu>
                                 <ContextMenu>
