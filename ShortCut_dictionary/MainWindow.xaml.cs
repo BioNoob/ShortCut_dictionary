@@ -1,5 +1,8 @@
-﻿using System;
+﻿using ShortCut_dictionary.Models;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,12 +28,6 @@ namespace ShortCut_dictionary
             this.MouseLeftButtonDown += delegate { this.DragMove(); };
         }
 
-        private void ContentControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var element = (DictClass)(sender as ContentControl).Tag;
-            Clipboard.SetText(element.ToString());
-        }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Srch_txb.Focus();
@@ -46,6 +43,26 @@ namespace ShortCut_dictionary
             IList dictionaries = SpellCheck.GetCustomDictionaries(Srch_txb);
             dictionaries.Remove(Settings.base_uri);
             Environment.Exit(0);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SetsPopUp.IsOpen = !SetsPopUp.IsOpen;
+            SetBtn.IsEnabled = false;
+        }
+        private void SetsPopUp_Closed(object sender, EventArgs e)
+        {
+            SetBtn.IsEnabled = true;
+        }
+
+        private void SearchResult_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var viewmodel = DataContext as MainModel;
+            if (e.RemovedItems.Count > 0)
+                viewmodel.ListOfSelected.RemoveRange(e.RemovedItems.Cast<DictClass>());
+            if (e.AddedItems.Count > 0)
+                viewmodel.ListOfSelected.AddRange(e.AddedItems.Cast<DictClass>());
+            //viewmodel.ListOfSelected.ToList().ForEach(t => System.Diagnostics.Debug.WriteLine(t));
         }
     }
 

@@ -70,5 +70,41 @@ namespace ShortCut_dictionary.Properties {
                 this["NewRec_upper_first"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Selected_sep_save {
+            get {
+                return ((int)(this["Selected_sep_save"]));
+            }
+            set {
+                this["Selected_sep_save"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Selected_sep_imp {
+            get {
+                return ((int)(this["Selected_sep_imp"]));
+            }
+            set {
+                this["Selected_sep_imp"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SelectedImportEncoding {
+            get {
+                return ((int)(this["SelectedImportEncoding"]));
+            }
+            set {
+                this["SelectedImportEncoding"] = value;
+            }
+        }
     }
 }

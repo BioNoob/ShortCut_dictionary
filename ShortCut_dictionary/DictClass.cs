@@ -1,4 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ShortCut_dictionary
 {
@@ -24,7 +27,7 @@ namespace ShortCut_dictionary
         }
         public override string ToString()
         {
-            return Short + " " + Full;
+            return Short + Settings.DecodeSepFormat(Settings.Selected_sep_save) + Full;
         }
         public override bool Equals(object objj)
         {
@@ -35,6 +38,10 @@ namespace ShortCut_dictionary
             }
             else
                 return false;
+        }
+        public override int GetHashCode()
+        {
+            return Short.GetHashCode() + Full.GetHashCode();
         }
     }
 }

@@ -27,6 +27,10 @@
             Key="S"
             Modifiers="Ctrl"
             Command="{Binding SaveJsnCmd}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+        <KeyBinding
+            Key="C"
+            Modifiers="Ctrl"
+            Command="{Binding CopyClipCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
     </Window.InputBindings>
     <WindowChrome.WindowChrome>
         <WindowChrome 
@@ -42,6 +46,8 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.Resources>
+        <local:EnumItemsSource x:Key="EncSource" Type="{x:Type local:EncodingFormat}"/>
+        <local:EnumItemsSource x:Key="SepSource" Type="{x:Type local:SeparatorsFormat}"/>
         <Style TargetType="{x:Type Button}" x:Key="ImgButton" BasedOn="{StaticResource DefaultStyle}">
             <Setter Property="Background" Value="#FF3F3F3F" />
             <Setter Property="BorderBrush" Value="#FF3F3F3F" />
@@ -70,6 +76,9 @@
         <Style TargetType="{x:Type ToolTip}">
             <Setter Property="FontFamily" Value="Jura"/>
             <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Jura"/>
         </Style>
         <Style TargetType="{x:Type MenuItem}">
             <Setter Property="Width" Value="Auto"/>
@@ -141,33 +150,18 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Label Content="Search" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-            <TextBox Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Text="{Binding Search_text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="Srch_txb"
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="5,0,0,0" Text="{Binding Search_text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="Srch_txb"
                      HorizontalContentAlignment="Left" VerticalContentAlignment="Center" KeyboardNavigation.TabIndex="0"/>
-            <Button Margin="5,0,0,0" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" Command="{Binding CloseWindowCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" KeyboardNavigation.TabIndex="2">
-                <Image Source="Resources/закрыть.png"/>
-                <Button.Style>
-                    <Style BasedOn="{StaticResource ImgButton}" TargetType="{x:Type Button}">
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#7FA50000"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="False">
-                                <Setter Property="Background" Value="#A50000"/>
-                            </Trigger>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter Property="Background" Value="#7FA50000"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-            <Label Content="Result" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,5,0,0"/>
-            <ListView Margin="10,5,0,0" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding FilteredListOfDict}" SelectionMode="Extended" AlternationCount="2" 
-                          x:Name="SearchResult" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+            <StackPanel Grid.Row="1" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,5,0,0">
+                <Label Content="Result" VerticalAlignment="Top" Padding="0" HorizontalAlignment="Center"/>
+                <Label Content="{Binding ListOfDict.Count}" Padding="0" FontSize="10" Foreground="LightGray" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+            </StackPanel>
+            <ListView Margin="5,5,0,0" Grid.Row="1" Grid.Column="1" ItemsSource="{Binding FilteredListOfDict}" SelectionMode="Extended" AlternationCount="2" SelectionChanged="SearchResult_SelectionChanged"   
+                          x:Name="SearchResult" HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                           IsTabStop="False" KeyboardNavigation.TabNavigation="None">
                 <ListView.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:DictClass}">
-                        <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick" Tag="{Binding }" IsTabStop="False" KeyboardNavigation.TabNavigation="None">
+                        <ContentControl IsTabStop="False" KeyboardNavigation.TabNavigation="None">
                             <Grid VerticalAlignment="Stretch" Margin="0" ClipToBounds="True">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="0.2*"/>
@@ -200,47 +194,149 @@
                     </Style>
                 </ListView.ItemContainerStyle>
             </ListView>
-            <Label Content="For copy ROW use double click!" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" Padding="0" FontSize="10" Foreground="LightGray"/>
-            <Button Margin="0,5,0,0" Grid.Row="1" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding AddNewRecordCommand}" Style="{StaticResource ImgButton}"
-                    KeyboardNavigation.TabIndex="1">
-                <Image Source="Resources/добавить.png"/>
-                <Button.ToolTip>
-                    <ToolTip Content="Add new record"/>
-                </Button.ToolTip>
-            </Button>
-            <Button Margin="5,0,0,0" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding ImportCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
-                    KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False" Style="{StaticResource ImgButton}">
-                <Image Source="Resources/импортировать.png"/>
-                <Button.ToolTip>
-                    <ToolTip Content="Import CSV"/>
-                </Button.ToolTip>
-            </Button>
-            <Button Margin="0,0,0,0" Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Right" VerticalAlignment="Bottom" Command="{Binding SaveJsnCmd}"
+            <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" BorderBrush="#808080" BorderThickness="0,1.5,0,0" Margin="0,3,0,0">
+                <Grid Margin="0,2,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Copy row's &quot;CTRL + C&quot;" Padding="0" FontSize="10" Foreground="LightGray" Grid.Row="0" Grid.Column="1" Margin="0,0,0,3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Label Content="Create new &quot;CTRL + N&quot;" Padding="0" FontSize="10" Foreground="LightGray" Grid.Row="0" Grid.Column="2" Margin="0,0,0,3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Label Content="Save change &quot;CTRL + S&quot;" Padding="0" FontSize="10" Foreground="LightGray" Grid.Row="1" Grid.Column="1" Margin="0,0,0,2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Label Content="Clear search &quot;ESC&quot;" Padding="0" FontSize="10" Foreground="LightGray" Grid.Row="1" Grid.Column="2" Margin="0,0,0,2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <Button Margin="0,0,0,0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" ClipToBounds="True"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Command="{Binding SaveJsnCmd}"
                     KeyboardNavigation.TabIndex="2">
-                <Button.ToolTip>
-                    <ToolTip Content="Save data"/>
-                </Button.ToolTip>
-                <Image Source="Resources/save.png"/>
-                <Button.Style>
-                    <Style BasedOn="{StaticResource ImgButton}" TargetType="{x:Type Button}">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsSaved}" Value="true">
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation To="LimeGreen" AutoReverse="True"
+                        <Button.ToolTip>
+                            <ToolTip Content="Save data"/>
+                        </Button.ToolTip>
+                        <Image Source="Resources/save.png"/>
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource ImgButton}" TargetType="{x:Type Button}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSaved}" Value="true">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard>
+                                                <Storyboard>
+                                                    <ColorAnimation To="LimeGreen" AutoReverse="True"
                                     Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)" 
                                     FillBehavior="Stop" 
                                     Duration="0:0:0.5"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
 
-                </Button.Style>
-            </Button>
+                        </Button.Style>
+                    </Button>
+                    <Button Margin="0,0,0,0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="SetBtn" Click="Button_Click"
+                    KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False" Style="{StaticResource ImgButton}">
+                        <Image Source="Resources/Settings.png"/>
+                        <Button.ToolTip>
+                            <ToolTip Content="Settings"/>
+                        </Button.ToolTip>
+                    </Button>
+                </Grid>
+            </Border>
+            <StackPanel Margin="5,0,0,0" Grid.Row="0" Grid.RowSpan="2" Grid.Column="3" ClipToBounds="True">
+                <Button HorizontalAlignment="Right" Command="{Binding CloseWindowCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" KeyboardNavigation.TabIndex="2">
+                    <Image Source="Resources/закрыть.png"/>
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource ImgButton}" TargetType="{x:Type Button}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#7FA50000"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="False">
+                                    <Setter Property="Background" Value="#A50000"/>
+                                </Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                    <Setter Property="Background" Value="#7FA50000"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding AddNewRecordCommand}" Style="{StaticResource ImgButton}"
+                    KeyboardNavigation.TabIndex="1"  Margin="0,5,0,0">
+                    <Image Source="Resources/добавить.png"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="Add new record"/>
+                    </Button.ToolTip>
+                </Button>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Top" 
+                        Command="{Binding RemoveduplicateCommand}" Style="{StaticResource ImgButton}" Margin="0,5,0,0"
+                        KeyboardNavigation.TabNavigation="None" IsTabStop="False">
+                    <Image Source="Resources/remove_dup.png"/>
+                    <Button.ToolTip>
+                        <ToolTip Content="Remove duplicate (fully)"/>
+                    </Button.ToolTip>
+                </Button>
+            </StackPanel>
+            <Popup x:Name="SetsPopUp" Placement="Bottom" Grid.Column="0" 
+                            IsOpen="False" Closed="SetsPopUp_Closed"
+                            AllowsTransparency="True" 
+                            Focusable="False" VerticalOffset="1.5"
+                            PopupAnimation="Slide" Width="250" StaysOpen="False">
+                <Border Background="#FF3F3F3F" BorderBrush="#FF97A0A5" BorderThickness="1.2" CornerRadius="2" HorizontalAlignment="Stretch">
+                    <Grid HorizontalAlignment="Stretch" Margin="2.5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Save separator" Foreground="White"  HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0"
+                                                   Margin="5,0,5,2" FontFamily="Jura" FontSize="11" />
+                        <ComboBox HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Row="0" ItemsSource="{StaticResource SepSource}" 
+                                          SelectedValue="{Binding Path=(local:Settings.Selected_sep_save), Mode=TwoWay, Converter={StaticResource SepSource}}"
+                                          Margin="5,0,5,0" IsEnabled="True" Grid.Column="1" FontSize="11" FontFamily="Jura">
+                        </ComboBox>
+                        <GroupBox Grid.ColumnSpan="2" Grid.Row="1" Header="Import settings" FontFamily="Jura" FontSize="11" BorderThickness="0.25"
+                                  Foreground="White">
+                            <Grid HorizontalAlignment="Stretch" Margin="2.5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="25"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Encoding" Foreground="White"  HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0"
+                                                   Margin="5,0,5,2"/>
+                                <ComboBox HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Row="0"
+                                                  Margin="5,5,0,0" IsEnabled="True" Grid.Column="1" Grid.ColumnSpan="2"  
+                                          ItemsSource="{StaticResource EncSource}" 
+                                          SelectedValue="{Binding Path=(local:Settings.SelectedImportEncoding), Mode=TwoWay, Converter={StaticResource EncSource}}"/>
+                                <TextBlock Text="Separator" Foreground="White"  HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"
+                                                   Margin="5,5,5,0"/>
+                                <ComboBox HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Grid.Row="1"
+                                                  Margin="5,5,5,0" IsEnabled="True" Grid.Column="1" ItemsSource="{StaticResource SepSource}" 
+                                          SelectedValue="{Binding Path=(local:Settings.Selected_sep_imp), Mode=TwoWay, Converter={StaticResource SepSource}}"/>
+                                <Button Margin="5,5,0,0" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Command="{Binding ImportCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" 
+                    KeyboardNavigation.TabNavigation="None" KeyboardNavigation.IsTabStop="False" Style="{StaticResource ImgButton}">
+                                    <Image Source="Resources/импортировать.png"/>
+                                    <Button.ToolTip>
+                                        <ToolTip Content="Import CSV"/>
+                                    </Button.ToolTip>
+                                </Button>
+                            </Grid>
+                        </GroupBox>
+                    </Grid>
+                </Border>
+            </Popup>
         </Grid>
 
     </Border>

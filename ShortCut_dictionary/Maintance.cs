@@ -1,19 +1,15 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using Point = System.Drawing.Point;
-using Size = System.Drawing.Size;
 
 namespace ShortCut_dictionary
 {
@@ -49,6 +45,91 @@ namespace ShortCut_dictionary
     {
         void Rendered();
     }
+    public enum EncodingFormat
+    {
+        [Description("UTF8")]
+        UTF8,
+        [Description("UNICODE")]
+        UTF16,
+        [Description("1251")]
+        Windows1251
+    }
+    public enum SeparatorsFormat
+    {
+        [Description(";")]
+        Semicolon,
+        [Description(",")]
+        Comma,
+        [Description("–")]
+        Longdash,
+        [Description("-")]
+        Dash,
+        [Description("TAB")]
+        Tab,
+        [Description("SPACE")]
+        Space
+    }
+    public class EnumItemsSource : Collection<String>, IValueConverter
+    {
+
+        Type type;
+
+        IDictionary<Object, Object> valueToNameMap;
+
+        IDictionary<Object, Object> nameToValueMap;
+
+        public Type Type
+        {
+            get { return this.type; }
+            set
+            {
+                if (!value.IsEnum)
+                    throw new ArgumentException("Type is not an enum.", "value");
+                this.type = value;
+                Initialize();
+            }
+        }
+
+        public Object Convert(Object value, Type targetType, Object parameter, CultureInfo culture)
+        {
+            return this.valueToNameMap[value];
+        }
+
+        public Object ConvertBack(Object value, Type targetType, Object parameter, CultureInfo culture)
+        {
+            return this.nameToValueMap[value];
+        }
+
+        void Initialize()
+        {
+            this.valueToNameMap = this.type
+              .GetFields(BindingFlags.Static | BindingFlags.Public)
+              .ToDictionary(fi => fi.GetValue(null), GetDescription);
+            this.nameToValueMap = this.valueToNameMap
+              .ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+            Clear();
+            foreach (String name in this.nameToValueMap.Keys)
+                Add(name);
+        }
+
+        static Object GetDescription(FieldInfo fieldInfo)
+        {
+            var descriptionAttribute =
+              (DescriptionAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(DescriptionAttribute));
+            return descriptionAttribute != null ? descriptionAttribute.Description : fieldInfo.Name;
+        }
+
+    }
+    public static class NDistinct
+    {
+        public static IEnumerable<T> NonDistinct<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector)
+        {
+            var a = source.GroupBy(keySelector);
+            var b = a.Where(g => g.Count() > 1);
+            var c = b.SelectMany(r => r.Take(r.Count() - 1));
+            return c;
+        }
+    }
     public class Proper : INotifyPropertyChanged
     {
         public Proper() { }
@@ -68,70 +149,6 @@ namespace ShortCut_dictionary
         protected bool SetProperty([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            return true;
-        }
-    }
-    public static class Settings
-    {
-        public static Uri base_uri { get; set; }
-        private static bool _chk_bx_case;
-        private static bool _chk_bx_first_case;
-        private static int windowSize_y;
-        private static int windowLastPos_y;
-        private static int windowSize_x;
-        private static int windowLastPos_x;
-        private static string _filepath = Directory.GetCurrentDirectory() + "\\dictionary.json";
-        public static string FilePath { get => _filepath; set { if (_filepath != value) { _filepath = value; SetProperty("FilePath"); } } }
-        public static int WindowSise_x { get => windowSize_x; set { if (windowSize_x != value) { windowSize_x = value; SetProperty("WindowSise_x"); } } }
-        public static int WindowLastPos_x { get => windowLastPos_x; set { if (windowLastPos_x != value) { windowLastPos_x = value; SetProperty("WindowLastPos_x"); } } }
-        public static int WindowSise_y { get => windowSize_y; set { if (windowSize_y != value) { windowSize_y = value; SetProperty("WindowSise_y"); } } }
-        public static int WindowLastPos_y { get => windowLastPos_y; set { if (windowLastPos_y != value) { windowLastPos_y = value; SetProperty("WindowLastPos_y"); } } }
-        public static bool ChkBxCase { get => _chk_bx_case; set { if (_chk_bx_case != value) { _chk_bx_case = value; SetProperty("ChkBxCase"); } } }
-        public static bool ChkBxFirstCase { get => _chk_bx_first_case; set { if (_chk_bx_first_case != value) { _chk_bx_first_case = value; SetProperty("ChkBxFirstCase"); } } }
-
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
-        public static void SetProperty([CallerMemberName] string propertyName = null)
-        {
-            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
-        }
-        public static void SaveSettings()
-        {
-            Properties.Settings.Default.LastPos = new Point(WindowLastPos_x, WindowLastPos_y);
-            Properties.Settings.Default.LastSize = new Size(WindowSise_x, WindowSise_y);
-            Properties.Settings.Default.NewRec_upper = ChkBxCase;
-            Properties.Settings.Default.NewRec_upper_first = ChkBxFirstCase;
-            Properties.Settings.Default.Save();
-        }
-        public static void LoadSettings()
-        {
-            WindowSise_x = Properties.Settings.Default.LastSize.Width;
-            WindowSise_y = Properties.Settings.Default.LastSize.Height;
-            WindowLastPos_x = Properties.Settings.Default.LastPos.X;
-            WindowLastPos_y = Properties.Settings.Default.LastPos.Y;
-            ChkBxCase = Properties.Settings.Default.NewRec_upper;
-            ChkBxFirstCase = Properties.Settings.Default.NewRec_upper_first;
-        }
-
-        public static WpfObservableRangeCollection<DictClass> LoadJson()
-        {
-
-            if (!File.Exists(FilePath))
-            {
-                File.Create(FilePath).Close();
-            }
-            return JsonConvert.DeserializeObject<WpfObservableRangeCollection<DictClass>>(File.ReadAllText(FilePath));
-        }
-
-        public static bool SaveJsone(WpfObservableRangeCollection<DictClass> coll)
-        {
-            try
-            {
-                File.WriteAllText(FilePath, JsonConvert.SerializeObject(coll));
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
             return true;
         }
     }

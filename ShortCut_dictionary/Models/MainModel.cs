@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace ShortCut_dictionary.Models
 {
@@ -52,7 +53,7 @@ namespace ShortCut_dictionary.Models
                     {
                         var reg = new Regex(@$"{search_text}", RegexOptions.IgnoreCase);
                         FilteredListOfDict = new WpfObservableRangeCollection<DictClass>(ListOfDict.Where(t => reg.IsMatch(t.Full) |
-                        reg.IsMatch(t.Short)).OrderBy(t=>t.Short));
+                        reg.IsMatch(t.Short)).OrderBy(t => t.Short));
                     }
                 }
                 else
@@ -69,6 +70,23 @@ namespace ShortCut_dictionary.Models
         private CommandHandler _editsearch;
         private CommandHandler _savecmd;
         private CommandHandler _import;
+        private CommandHandler _removeduplicate;
+        private CommandHandler _copy_clipboard;
+        public CommandHandler RemoveduplicateCommand
+        {
+            get
+            {
+                return _removeduplicate ??= new CommandHandler(obj =>
+                {
+
+                    var a = ListOfDict.NonDistinct(t => t.ToString()).ToList();
+                    ListOfDict.RemoveRange(a);
+                    Search();
+                },
+                (obj) => true
+                );
+            }
+        }
         public CommandHandler ImportCommand
         {
             get
@@ -86,35 +104,34 @@ namespace ShortCut_dictionary.Models
                     {
                         //Добавить форму импорта с выбором кодировки и разделителя.
                         //Добавить копирование чере список выделенных с указанаием разделителя
-                        //Добавить удаление дубликатов (полных)
-                        var buf = File.ReadLines(Ofd.FileName, Encoding.GetEncoding(1251)).ToList();
+                        Encoding ec = Encoding.Default;
+                        switch (Settings.SelectedImportEncoding)
+                        {
+                            case EncodingFormat.UTF8:
+                                ec = Encoding.UTF8;
+                                break;
+                            case EncodingFormat.UTF16:
+                                ec = Encoding.Unicode;
+                                break;
+                            case EncodingFormat.Windows1251:
+                                ec = Encoding.GetEncoding(1251);
+                                break;
+                        }
+                        var buf = File.ReadLines(Ofd.FileName, ec).ToList();
                         List<DictClass> dc = new List<DictClass>();
                         buf.ForEach(t =>
                         {
-                            string[] k = t.Split(";");
+                            string[] k = t.Split(Settings.DecodeSepFormat(Settings.Selected_sep_imp));
                             if (k.Count() != 2)
                             {
-                                k = t.Split(",");
-                                if (k.Count() != 2)
-                                {
-                                    k = t.Split(" ");
-                                    if (k.Count() != 2)
-                                    {
-                                        k = t.Split("\t");
-                                        if (k.Count() != 2)
-                                        {
-                                            System.Windows.MessageBox.Show("Error recognize import file");
-                                            return;
-                                        }
-                                    }
-                                }
+                                System.Windows.MessageBox.Show("Error recognize import file");
+                                return;
                             }
                             var a = new DictClass(k[0].Trim(), k[1].Trim());
                             NewRecordModel.Check_settings(a);
                             dc.Add(a);
                         });
                         ListOfDict.AddRange(dc);
-                        ListOfDict.OrderBy(t => t.Short);
                         Search();
                     }
                     else
@@ -212,7 +229,7 @@ namespace ShortCut_dictionary.Models
                 );
             }
         }
-
+        //http://blog.functionalfun.net/2009/02/how-to-databind-to-selecteditems.html
         public CommandHandler CloseWindowCommand
         {
             get
@@ -244,6 +261,21 @@ namespace ShortCut_dictionary.Models
                 );
             }
         }
+        public CommandHandler CopyClipCommand
+        {
+            get
+            {
+                return _copy_clipboard ??= new CommandHandler(obj =>
+                {
+                    string pit = string.Empty;
+                    pit += string.Join("\r\n",ListOfSelected.OrderBy(t=>t.Short));
+                    pit += "\r\n";
+                    Clipboard.SetText(pit);
+                },
+                (obj) => true
+                );
+            }
+        }        
 
         public WpfObservableRangeCollection<DictClass> FilteredListOfDict { get => _filteredListofdict; set => SetProperty(ref _filteredListofdict, value); }
         private WpfObservableRangeCollection<DictClass> _filteredListofdict;
@@ -251,13 +283,13 @@ namespace ShortCut_dictionary.Models
 
         public WpfObservableRangeCollection<DictClass> ListOfDict { get => _listofdict; set => SetProperty(ref _listofdict, value); }
         private WpfObservableRangeCollection<DictClass> _listofdict;
+        public WpfObservableRangeCollection<DictClass> ListOfSelected { get => _listofselected; set => SetProperty(ref _listofselected, value); }
+        private WpfObservableRangeCollection<DictClass> _listofselected;
         public MainModel()
         {
             ListOfDict = new WpfObservableRangeCollection<DictClass>();
             FilteredListOfDict = new WpfObservableRangeCollection<DictClass>();
-
-
-            //Sets = new Settings();
+            ListOfSelected = new WpfObservableRangeCollection<DictClass>();
         }
     }
 }

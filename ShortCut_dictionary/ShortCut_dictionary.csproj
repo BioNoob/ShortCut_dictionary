@@ -7,11 +7,13 @@
     <ApplicationIcon>Resources\Untitled.ico</ApplicationIcon>
     <AssemblyName>Npc Dictionary</AssemblyName>
     <Copyright>[DF] Yakor</Copyright>
-    <Company>Npc800</Company>
+    <Company>Yasma_corp</Company>
     <Authors>[DF] Yakor</Authors>
-    <AssemblyVersion>1.2.1.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
-    <Version>1.2.1</Version>
+    <AssemblyVersion>1.2.3.0</AssemblyVersion>
+    <FileVersion>1.2.3.0</FileVersion>
+    <Version>1.2.3</Version>
+    <PackageIcon>Untitled.ico</PackageIcon>
+    <PackageIconUrl />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -21,6 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\remove_dup.png" />
     <None Remove="Resources\Rus.dic" />
     <None Remove="Resources\Russian_b.dic" />
     <None Remove="Resources\Russian_b.lex" />
@@ -28,11 +31,16 @@
     <None Remove="Resources\r_checked.png" />
     <None Remove="Resources\r_unchecked.png" />
     <None Remove="Resources\save.png" />
+    <None Remove="Resources\Settings.png" />
     <None Remove="Resources\Untitled.ico" />
     <None Remove="Resources\добавить.png" />
     <None Remove="Resources\закрыть.png" />
     <None Remove="Resources\импортировать.png" />
     <None Remove="Resources\принять.png" />
+    <None Include="Resources\Untitled.ico">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -42,10 +50,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\remove_dup.png" />
     <Resource Include="Resources\Russian_b.dic" />
     <Resource Include="Resources\r_checked.png" />
     <Resource Include="Resources\r_unchecked.png" />
     <Resource Include="Resources\save.png" />
+    <Resource Include="Resources\Settings.png" />
     <Resource Include="Resources\Untitled.ico" />
     <Resource Include="Resources\добавить.png" />
     <Resource Include="Resources\закрыть.png" />
